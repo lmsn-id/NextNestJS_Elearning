@@ -1,0 +1,6 @@
+{
+  "schema": "./libs/db/schema.ts",
+  "connectionString": "postgresql://postgres:admin@localhost:5432/elearning?schema=public",
+  "dialect": "postgresql",
+  "out": "./libs/db/migrations"
+}
