@@ -113,11 +113,11 @@ export default function SidebarAdmin() {
                       <li className="mt-0.5 w-full">
                         <Link
                           className={`py-3 text-lg ease-nav-brand flex items-center whitespace-nowrap rounded-lg px-4 font-semibold transition-colors hover:bg-gray-300 ${
-                            isActive("/admin/akun/akademik")
+                            isActive("/admin/data/akademik")
                               ? "bg-gray-300 text-white"
                               : "bg-blue-500/13 text-slate-700"
                           }`}
-                          href="/admin/akun/akademik"
+                          href="/admin/data/akademik"
                         >
                           <div className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center text-center xl:p-2.5">
                             <Icon

@@ -5,7 +5,7 @@ import {
   varchar,
   boolean,
   timestamp,
-  bigint,
+  json,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -49,6 +49,27 @@ export const datasiswa = pgTable("datasiswa", {
   jenis_kelamin: varchar("jenis_kelamin", { length: 10 }),
   tempat_lahir: varchar("tempat_lahir", { length: 50 }),
   tanggal_lahir: timestamp("tanggal_lahir", { mode: "string" }),
+  created_at: timestamp("created_at", { mode: "string", withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  updated_at: timestamp("updated_at", { mode: "string", withTimezone: true }),
+});
+
+export const dataakademik = pgTable("dataakademik", {
+  id: varchar("id", { length: 36 }).primaryKey(),
+  nuptk: varchar("nuptk", { length: 20 }),
+  nip: varchar("nip", { length: 20 }).notNull().unique(),
+  nama: varchar("nama", { length: 50 }).notNull(),
+  jenis_kelamin: varchar("jenis_kelamin", { length: 10 }),
+  tempat_lahir: varchar("tempat_lahir", { length: 50 }),
+  tanggal_lahir: timestamp("tanggal_lahir", { mode: "string" }),
+  agama: varchar("agama", { length: 10 }),
+  alamat: text("alamat"),
+  no_telepon: text("no_telepon"),
+  email: text("email"),
+  posisi: varchar("posisi", { length: 20 }).notNull(),
+  kelas: varchar("kelas", { length: 10 }),
+  materi: json("materi"),
   created_at: timestamp("created_at", { mode: "string", withTimezone: true })
     .notNull()
     .defaultNow(),

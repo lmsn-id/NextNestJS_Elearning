@@ -10,19 +10,40 @@ export default function NavbarAdmin() {
   const dropdownRef = useRef<HTMLLIElement>(null);
   const pathname = usePathname();
 
-  const pathToTextMap: { [key: string]: string } = {
+  const staticPaths: { [key: string]: string } = {
     "/admin": "Home",
-    "/admin/data": "Akun",
     "/admin/data/siswa": "Data Siswa",
-    "/admin/data/siswa/add-siswa": "Add Siswa",
-    "/admin/data/akademik": "Akun Akademik",
-    "/admin/data/akademik/add-akun": "Add Akun Akademik",
-    "/admin/chatbot/chat": "Chatbot ",
-    "/admin/chatbot/chat/add-chat": "Add Chatbot ",
-    "/admin/chatbot/cache": "Cache Chatbot ",
+    "/admin/data/siswa/post": "Add Siswa",
+    "/admin/data/akademik": "Data Akademik",
+    "/admin/data/akademik/post": "Add Data Akademik",
+    "/admin/chatbot/chat": "Chatbot",
+    "/admin/chatbot/chat/add-chat": "Add Chatbot",
+    "/admin/chatbot/cache": "Cache Chatbot",
   };
 
-  const currentText = pathToTextMap[pathname as string] || "";
+  const dynamicRoutes = [
+    {
+      pattern: /^\/admin\/data\/siswa\/update\/[a-fA-F0-9-]+$/,
+      label: "Update Siswa",
+    },
+    {
+      pattern: /^\/admin\/data\/akademik\/update\/[a-fA-F0-9-]+$/,
+      label: "Update Akademik",
+    },
+  ];
+
+  let currentText = staticPaths[pathname as string] || "";
+
+  switch (true) {
+    case dynamicRoutes[0].pattern.test(pathname):
+      currentText = dynamicRoutes[0].label;
+      break;
+    case dynamicRoutes[1].pattern.test(pathname):
+      currentText = dynamicRoutes[1].label;
+      break;
+    default:
+      break;
+  }
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -36,7 +57,6 @@ export default function NavbarAdmin() {
     };
 
     document.addEventListener("mousedown", handleOutsideClick);
-
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };

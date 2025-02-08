@@ -48,7 +48,10 @@ export default function Navbar({ session }: SessionProp) {
       );
     }
 
-    if (session?.user?.role === "GURU") {
+    if (
+      session?.user?.role === "Guru" ||
+      session?.user?.role === "Kepala Sekolah"
+    ) {
       return (
         <li>
           <Link

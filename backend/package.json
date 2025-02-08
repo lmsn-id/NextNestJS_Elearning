@@ -9,7 +9,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "bun ./src/main.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "generate:migration": "bunx drizzle-kit generate",
+    "generate": "bunx drizzle-kit generate",
     "migrate": "bunx tsx libs/db/migrate.ts",
     "migrate:full": "bunx drizzle-kit generate && bunx tsx libs/db/migrate.ts"
   },
