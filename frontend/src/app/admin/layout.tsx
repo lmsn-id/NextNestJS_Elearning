@@ -18,10 +18,11 @@ export default async function AdminPageWrapper({
 
   if (
     !session ||
+    !session.user.access_token ||
     !session.user?.is_superuser ||
     session.user.role !== "superadmin"
   ) {
-    redirect("/login");
+    redirect("/404");
   }
 
   return (

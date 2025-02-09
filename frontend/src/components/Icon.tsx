@@ -9,16 +9,19 @@ import {
   FaPencilAlt,
   FaCalendarAlt,
 } from "react-icons/fa";
-import { IoMdChatbubbles } from "react-icons/io";
+import { IoMdChatbubbles, IoIosArrowForward } from "react-icons/io";
+import { BsClipboard2DataFill } from "react-icons/bs";
 import { PiStudentFill } from "react-icons/pi";
 import { FaBookBookmark } from "react-icons/fa6";
-import { FiFileText } from "react-icons/fi";
-import { TbBrandDatabricks } from "react-icons/tb";
+import { FiFileText, FiCalendar, FiFolder } from "react-icons/fi";
+import { TbBrandDatabricks, TbBook, TbReportAnalytics } from "react-icons/tb";
 import {
   MdOutlineLastPage,
   MdCached,
   MdNotificationsActive,
+  MdOutlineDashboard,
 } from "react-icons/md";
+import { HiMenuAlt3 } from "react-icons/hi";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
 
@@ -37,6 +40,9 @@ const Icons = {
   IoMdChatbubbles: dynamic(() => Promise.resolve(IoMdChatbubbles), {
     ssr: false,
   }),
+  IoIosArrowForward: dynamic(() => Promise.resolve(IoIosArrowForward), {
+    ssr: false,
+  }),
   PiStudentFill: dynamic(() => Promise.resolve(PiStudentFill), { ssr: false }),
   MdOutlineLastPage: dynamic(() => Promise.resolve(MdOutlineLastPage), {
     ssr: false,
@@ -49,15 +55,50 @@ const Icons = {
   }),
   MdCached: dynamic(() => Promise.resolve(MdCached), { ssr: false }),
   FiFileText: dynamic(() => Promise.resolve(FiFileText), { ssr: false }),
+  HiMenuAlt3: dynamic(() => Promise.resolve(HiMenuAlt3), { ssr: false }),
+  BsClipboard2DataFill: dynamic(() => Promise.resolve(BsClipboard2DataFill), {
+    ssr: false,
+  }),
+  TbBook: dynamic(() => Promise.resolve(TbBook), {
+    ssr: false,
+  }),
+  FiCalendar: dynamic(() => Promise.resolve(FiCalendar), {
+    ssr: false,
+  }),
+  TbReportAnalytics: dynamic(() => Promise.resolve(TbReportAnalytics), {
+    ssr: false,
+  }),
+  FiFolder: dynamic(() => Promise.resolve(FiFolder), {
+    ssr: false,
+  }),
+  MdOutlineDashboard: dynamic(() => Promise.resolve(MdOutlineDashboard), {
+    ssr: false,
+  }),
 };
 
 const Icon = memo(
-  ({ name, className }: { name: keyof typeof Icons; className?: string }) => {
+  ({
+    name,
+    className,
+    size,
+    onClick,
+  }: {
+    name: keyof typeof Icons;
+    className?: string;
+    size?: number;
+    onClick?: () => void;
+  }) => {
     const IconComponent = Icons[name];
 
     if (!IconComponent) return null;
 
-    return <IconComponent className={clsx(className)} />;
+    return (
+      <IconComponent
+        className={clsx(className)}
+        size={size}
+        onClick={onClick}
+      />
+    );
   }
 );
 

@@ -1,5 +1,12 @@
 import { usePathname } from "next/navigation";
 import { useRef } from "react";
+import { create } from "zustand";
+
+interface SidebarState {
+  isOpen: boolean;
+  toggleSidebar: () => void;
+  closeSidebar: () => void;
+}
 
 export const hiddenNavbar = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -27,3 +34,9 @@ export const InputTypeNumber = () => {
     handleInput,
   };
 };
+
+export const useSidebarStore = create<SidebarState>((set) => ({
+  isOpen: false,
+  toggleSidebar: () => set((state) => ({ isOpen: !state.isOpen })),
+  closeSidebar: () => set({ isOpen: false }),
+}));
