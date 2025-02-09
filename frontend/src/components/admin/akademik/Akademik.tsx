@@ -57,6 +57,10 @@ export default function AkademikPage({ dataAkademik }: AkademikProps) {
     router.push(`${BaseUrl}/post`);
   };
 
+  const handleEdit = async (id: string) => {
+    router.push(`${BaseUrl}/update/${id}`);
+  };
+
   const handleDelete = async (id: string, nama: string) => {
     Swal.fire({
       title: "Apakah Anda yakin?",
@@ -150,7 +154,10 @@ export default function AkademikPage({ dataAkademik }: AkademikProps) {
                     {akademik.posisi}
                   </td>
                   <td className="px-6 py-3 text-center font-semibold text-lg space-x-6">
-                    <button className="p-2 bg-blue-500 text-white rounded-lg">
+                    <button
+                      onClick={() => handleEdit(akademik.id)}
+                      className="p-2 bg-blue-500 text-white rounded-lg"
+                    >
                       Edit
                     </button>
                     <button

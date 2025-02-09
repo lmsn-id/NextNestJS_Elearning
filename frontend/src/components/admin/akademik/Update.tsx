@@ -1,75 +1,69 @@
 "use client";
-import React from "react";
-import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
-import axios from "axios";
-import { useForm, useFieldArray } from "react-hook-form";
 
-interface FormValues {
-  Nuptk: string;
-  Nip: string;
-  Nama: string;
-  Posisi: string;
-  Kelas: string;
-  Materi: { id: string; value: string; kelasMateri: string[] }[];
+import { useEffect } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import axios from "axios";
+
+interface Akademik {
+  id: string;
+  nip: string;
+  nuptk: string | null;
+  nama: string;
+  kelas?: string;
+  materi?: { value: string; kelasMateri: string[] }[];
+  posisi: string;
 }
 
-export default function AddAkunAkademik() {
-  const router = useRouter();
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>({
+export default function UpdateAkademikClient({
+  akademikData,
+}: {
+  akademikData: Akademik;
+}) {
+  const { register, handleSubmit, control, reset, watch } = useForm<Akademik>({
     defaultValues: {
-      Nuptk: "",
-      Nip: "",
-      Nama: "",
-      Posisi: "",
-      Materi: [{ id: Date.now().toString(), value: "", kelasMateri: [] }],
+      id: "",
+      nip: "",
+      nuptk: null,
+      nama: "",
+      kelas: "",
+      materi: [],
+      posisi: "",
     },
   });
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
-    name: "Materi",
+    name: "materi",
   });
 
-  const posisi = watch("Posisi");
+  const router = useRouter();
+  const posisi = watch("posisi");
 
-  const onSubmit = async (data: FormValues) => {
-    console.log("Data Input", data);
-
-    if (!data.Nip || !data.Nama || !data.Posisi) {
-      toast.info(
-        `Data ${!data.Nip ? "Nip, " : ""}${!data.Nama ? "Nama, " : ""}${
-          !data.Posisi ? "Posisi, " : ""
-        } wajib diisi!`
-      );
-      return;
+  useEffect(() => {
+    if (akademikData) {
+      reset({
+        id: akademikData.id,
+        nip: akademikData.nip || "",
+        nuptk: akademikData.nuptk || null,
+        nama: akademikData.nama || "",
+        kelas: akademikData.kelas || "",
+        materi: akademikData.materi
+          ? akademikData.materi.map((m) => ({
+              value: m.value,
+              kelasMateri: m.kelasMateri,
+            }))
+          : [],
+        posisi: akademikData.posisi || "",
+      });
     }
+  }, [akademikData, reset]);
 
-    if (
-      data.Posisi === "Guru" &&
-      data.Materi.some((materi) => !materi.value || !materi.kelasMateri.length)
-    ) {
-      toast.info("Materi dan kelas wajib diisi!");
-      return;
-    }
-
+  const onSubmit = async (data: Akademik) => {
     try {
-      const transformedMateri = data.Materi.map(({ ...rest }) => rest);
-
-      const transformedData = {
-        ...data,
-        Materi: transformedMateri,
-      };
-
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/auth/add/akademik`;
-      const response = await axios.post(url, transformedData);
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/auth/update/${akademikData.id}`;
+      const response = await axios.put(url, data);
 
       if (response.status >= 200 && response.status < 300) {
         toast.success(response.data.message, {
@@ -81,8 +75,8 @@ export default function AddAkunAkademik() {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Terjadi kesalahan. Silakan coba lagi.");
+      console.error("Failed to update data", error);
+      toast.error("Gagal memperbarui data akademik");
     }
   };
 
@@ -91,69 +85,65 @@ export default function AddAkunAkademik() {
       <div className="p-6 max-h-full overflow-y-auto">
         <div className="w-full flex justify-center mb-4">
           <h1 className="text-gray-900 text-lg font-semibold">
-            Add Akun Akademik
+            Update Data Sekolah
           </h1>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mb-4">
             <label
-              htmlFor="Nuptk"
               className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              NUPTK
-            </label>
-            <input
-              className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-              id="Nuptk"
-              type="text"
-              placeholder="Masukan NUPTK"
-              {...register("Nuptk")}
-            />
-          </div>
-          <div className="mb-4">
-            <label
               htmlFor="Nip"
-              className="block text-gray-700 text-sm font-bold mb-2"
             >
               NIP
             </label>
             <input
-              className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-              id="Nip"
               type="text"
-              placeholder="Masukan NIP"
-              {...register("Nip")}
+              {...register("nip", { required: true })}
+              placeholder="Masukkan Nip "
+              id="Nip"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
           <div className="mb-4">
             <label
-              htmlFor="Nama"
               className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="Nuptk"
+            >
+              NUPTK
+            </label>
+            <input
+              type="text"
+              {...register("nuptk")}
+              placeholder="Masukkan NUPTK "
+              id="Nuptk"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="Nama"
             >
               Nama
             </label>
             <input
-              className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-              id="Nama"
               type="text"
-              placeholder="Masukan Nama"
-              {...register("Nama")}
+              {...register("nama", { required: true })}
+              placeholder="Masukkan Nama "
+              id="Nama"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
-            {errors.Nama && (
-              <p className="text-red-500 text-sm">{errors.Nama.message}</p>
-            )}
           </div>
           <div className="mb-4">
             <label
-              htmlFor="Posisi"
               className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="Posisi"
             >
               Posisi
             </label>
             <select
-              className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-              id="Posisi"
-              {...register("Posisi")}
+              className="shadow border rounded w-full py-2 px-3 text-gray-700"
+              {...register("posisi")}
             >
               <option value="" disabled>
                 Pilih Posisi
@@ -164,9 +154,6 @@ export default function AddAkunAkademik() {
               <option value="Wakil Kepala Sekolah">Wakil Kepala Sekolah</option>
               <option value="Kepala Sekolah">Kepala Sekolah</option>
             </select>
-            {errors.Posisi && (
-              <p className="text-red-500 text-sm">{errors.Posisi.message}</p>
-            )}
           </div>
 
           {posisi === "Guru" && (
@@ -183,7 +170,7 @@ export default function AddAkunAkademik() {
                   id="Kelas"
                   type="text"
                   placeholder="Masukan Kelas"
-                  {...register("Kelas")}
+                  {...register("kelas")}
                 />
               </div>
               {fields.map((item, index) => (
@@ -201,9 +188,7 @@ export default function AddAkunAkademik() {
                         id={`Materi-${index}`}
                         type="text"
                         placeholder={`Masukan Materi ${index + 1}`}
-                        {...register(`Materi.${index}.value`, {
-                          required: "Materi wajib diisi",
-                        })}
+                        {...register(`materi.${index}.value`)}
                       />
                     </div>
                     <div className="w-full">
@@ -218,41 +203,35 @@ export default function AddAkunAkademik() {
                         id={`Materi-${index}-kelasMateri`}
                         type="text"
                         placeholder="Masukkan kelas terkait (pisahkan dengan koma)"
-                        {...register(`Materi.${index}.kelasMateri`)}
+                        {...register(`materi.${index}.kelasMateri`)}
                       />
                     </div>
                     <button
                       type="button"
-                      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded flex-shrink-0"
-                      onClick={() =>
-                        append({
-                          id: Date.now().toString(),
-                          value: "",
-                          kelasMateri: [],
-                        })
-                      }
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                      onClick={() => remove(index)}
                     >
-                      Add Materi
+                      Hapus
                     </button>
                   </div>
                 </div>
               ))}
+              <button
+                type="button"
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => append({ value: "", kelasMateri: [] })}
+              >
+                Tambah Materi
+              </button>
             </>
           )}
 
-          <div className="w-full flex justify-end space-x-8">
-            <button
-              type="button"
-              className="bg-red-500 hover:bg-red-700 rounded-lg shadow-md px-4 py-2 text-white font-semibold"
-              onClick={() => reset()}
-            >
-              Reset
-            </button>
+          <div className="w-full flex justify-end">
             <button
               type="submit"
-              className="bg-[#3a3086] hover:bg-[#0095da] rounded-lg shadow-md px-4 py-2 text-white font-semibold"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
-              Submit
+              Simpan
             </button>
           </div>
         </form>
