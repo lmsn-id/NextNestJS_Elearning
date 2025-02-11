@@ -39,9 +39,10 @@ export class AuthAkademikService {
     const transformedMateri =
       data.Posisi === "Guru"
         ? JSON.stringify(
-            data.Materi.map(({ value, kelasMateri }) => ({
+            data.Materi.map(({ value, kelasMateri, jadwal }) => ({
               value,
               kelasMateri,
+              jadwal,
             }))
           )
         : null;

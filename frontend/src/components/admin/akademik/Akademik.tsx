@@ -140,7 +140,12 @@ export default function AkademikPage({ dataAkademik }: AkademikProps) {
             </thead>
             <tbody>
               {filteredAkademik.map((akademik, index) => (
-                <tr key={akademik.id} className="border-b border-gray-300">
+                <tr
+                  key={akademik.id}
+                  className={`border-b border-gray-50 ${
+                    index % 2 === 0 ? "bg-white" : "bg-gray-100"
+                  }`}
+                >
                   <td className="px-6 py-3 text-center font-semibold text-lg">
                     {index + 1}
                   </td>

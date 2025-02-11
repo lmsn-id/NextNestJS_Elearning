@@ -17,7 +17,11 @@ interface DataAkademik {
   nuptk: string | null;
   nama: string;
   kelas?: string;
-  materi?: { value: string; kelasMateri: string[] }[];
+  materi?: {
+    value: string;
+    kelasMateri: string | string[];
+    jadwal: string | string[];
+  }[];
   posisi: string;
 }
 
@@ -60,13 +64,11 @@ export default async function AkademikLayout({
 
   return (
     <AkademikProvider dataAkademik={dataAkademik}>
-      <div className="flex h-screen">
+      <div className="flex min-h-screen bg-gray-100">
         <SidebarAkademik />
         <div className="flex-1 min-w-0">
           <NavbarAkademik dataAkademik={dataAkademik} />
-          <main className="md:p-4 bg-gray-100 h-screen overflow-x-hidden">
-            {children}
-          </main>
+          <main className="md:p-4  overflow-x-hidden">{children}</main>
         </div>
       </div>
     </AkademikProvider>

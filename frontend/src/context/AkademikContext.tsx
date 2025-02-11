@@ -8,7 +8,11 @@ interface DataAkademik {
   nuptk: string | null;
   nama: string;
   kelas?: string;
-  materi?: { value: string; kelasMateri: string[] }[];
+  materi?: {
+    value: string;
+    kelasMateri: string | string[];
+    jadwal: string | string[];
+  }[];
   posisi: string;
 }
 

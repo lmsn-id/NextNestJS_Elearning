@@ -11,7 +11,12 @@ interface FormValues {
   Nama: string;
   Posisi: string;
   Kelas: string;
-  Materi: { id: string; value: string; kelasMateri: string[] }[];
+  Materi: {
+    id: string;
+    value: string;
+    kelasMateri: string[];
+    jadwal: string[];
+  }[];
 }
 
 export default function AddAkunAkademik() {
@@ -29,11 +34,13 @@ export default function AddAkunAkademik() {
       Nip: "",
       Nama: "",
       Posisi: "",
-      Materi: [{ id: Date.now().toString(), value: "", kelasMateri: [] }],
+      Materi: [
+        { id: Date.now().toString(), value: "", kelasMateri: [], jadwal: [] },
+      ],
     },
   });
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "Materi",
   });
@@ -41,8 +48,6 @@ export default function AddAkunAkademik() {
   const posisi = watch("Posisi");
 
   const onSubmit = async (data: FormValues) => {
-    console.log("Data Input", data);
-
     if (!data.Nip || !data.Nama || !data.Posisi) {
       toast.info(
         `Data ${!data.Nip ? "Nip, " : ""}${!data.Nama ? "Nama, " : ""}${
@@ -54,7 +59,10 @@ export default function AddAkunAkademik() {
 
     if (
       data.Posisi === "Guru" &&
-      data.Materi.some((materi) => !materi.value || !materi.kelasMateri.length)
+      data.Materi.some(
+        (materi) =>
+          !materi.value || !materi.kelasMateri.length || !materi.jadwal.length
+      )
     ) {
       toast.info("Materi dan kelas wajib diisi!");
       return;
@@ -186,54 +194,92 @@ export default function AddAkunAkademik() {
                   {...register("Kelas")}
                 />
               </div>
+
               {fields.map((item, index) => (
                 <div key={item.id} className="mb-4">
-                  <div className="flex items-end space-x-4 w-full">
-                    <div className="w-full">
-                      <label
-                        htmlFor={`Materi-${index}`}
-                        className="block text-gray-700 text-sm font-bold mb-2"
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Materi {index + 1}
+                  </label>
+                  <div className="flex justify-between items-center">
+                    <input
+                      className="shadow border w-1/2 rounded py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
+                      type="text"
+                      placeholder={`Masukan Materi ${index + 1}`}
+                      {...register(`Materi.${index}.value`, {
+                        required: "Materi wajib diisi",
+                      })}
+                    />
+                    <div className="flex space-x-4">
+                      <button
+                        type="button"
+                        className="bg-green-300 hover:bg-green-400 text-gray-800 font-bold py-2 px-4 rounded"
+                        onClick={() => {
+                          const newKelasMateri = [...item.kelasMateri, ""];
+                          const newJadwal = [...item.jadwal, ""];
+                          const updatedMateri = {
+                            ...item,
+                            kelasMateri: newKelasMateri,
+                            jadwal: newJadwal,
+                          };
+                          remove(index);
+                          append(updatedMateri);
+                        }}
                       >
-                        Materi {index + 1}
-                      </label>
-                      <input
-                        className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-                        id={`Materi-${index}`}
-                        type="text"
-                        placeholder={`Masukan Materi ${index + 1}`}
-                        {...register(`Materi.${index}.value`, {
-                          required: "Materi wajib diisi",
-                        })}
-                      />
-                    </div>
-                    <div className="w-full">
-                      <label
-                        htmlFor={`Materi-${index}-kelasMateri`}
-                        className="block text-gray-700 text-sm font-bold mb-2 mt-2"
+                        Add Kelas
+                      </button>
+
+                      <button
+                        type="button"
+                        className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded"
+                        onClick={() =>
+                          append({
+                            id: Date.now().toString(),
+                            value: "",
+                            kelasMateri: [],
+                            jadwal: [],
+                          })
+                        }
                       >
-                        Kelas Materi
-                      </label>
-                      <input
-                        className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
-                        id={`Materi-${index}-kelasMateri`}
-                        type="text"
-                        placeholder="Masukkan kelas terkait (pisahkan dengan koma)"
-                        {...register(`Materi.${index}.kelasMateri`)}
-                      />
+                        Add Materi
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded flex-shrink-0"
-                      onClick={() =>
-                        append({
-                          id: Date.now().toString(),
-                          value: "",
-                          kelasMateri: [],
-                        })
-                      }
-                    >
-                      Add Materi
-                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                      {item.kelasMateri.map((kelas, kelasIndex) => (
+                        <div key={kelasIndex} className="mb-4">
+                          <label className="block text-gray-700 text-sm font-bold mb-2">
+                            Kelas Materi {kelasIndex + 1}
+                          </label>
+                          <input
+                            className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
+                            type="text"
+                            placeholder="Masukan Kelas Materi"
+                            {...register(
+                              `Materi.${index}.kelasMateri.${kelasIndex}`
+                            )}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <div>
+                      {item.jadwal.map((jadwal, jadwalIndex) => (
+                        <div key={jadwalIndex} className="mb-4">
+                          <label className="block text-gray-700 text-sm font-bold mb-2">
+                            Jadwal {jadwalIndex + 1}
+                          </label>
+                          <input
+                            className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
+                            type="text"
+                            placeholder="Masukan Jadwal"
+                            {...register(
+                              `Materi.${index}.jadwal.${jadwalIndex}`
+                            )}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}

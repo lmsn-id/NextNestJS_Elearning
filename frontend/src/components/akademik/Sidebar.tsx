@@ -17,7 +17,6 @@ export default function SidebarAkademik() {
   const [isMobile, setIsMobile] = useState(false);
   const { isOpen, closeSidebar } = useSidebarStore();
 
-  // State untuk Master Data Dropdown
   const [isMasterDataOpen, setIsMasterDataOpen] = useState(false);
 
   useEffect(() => {

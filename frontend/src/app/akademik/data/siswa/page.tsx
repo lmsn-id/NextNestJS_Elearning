@@ -2,27 +2,40 @@
 import { useAkademik } from "@/context/AkademikContext";
 import { useRouter, usePathname } from "next/navigation";
 
+interface MateriItem {
+  value: string;
+  kelasMateri: string | string[];
+  jadwal: string | string[];
+}
+
 export default function DataSiswaAkademik() {
   const { dataAkademik } = useAkademik();
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname: string = usePathname();
   const baseUrl = pathname.split("/").slice(0, 4).join("/");
+  console.log(dataAkademik);
 
-  const processedData = dataAkademik?.materi
-    ?.flatMap(
-      (materiItem: { value: string; kelasMateri: string | string[] }) => {
-        const kelasList =
-          typeof materiItem.kelasMateri === "string"
-            ? materiItem.kelasMateri.split(", ")
-            : [];
+  if (!dataAkademik || !dataAkademik.materi) {
+    return <div>Loading...</div>;
+  }
 
-        return kelasList.map((kelas) => ({
-          mataPelajaran: materiItem.value,
-          kelas: kelas,
-        }));
-      }
-    )
-    ?.sort((a, b) => {
+  const processedData = dataAkademik.materi
+    .flatMap((materiItem: MateriItem) => {
+      const kelasList = Array.isArray(materiItem.kelasMateri)
+        ? materiItem.kelasMateri
+        : [materiItem.kelasMateri];
+
+      const jadwalList = Array.isArray(materiItem.jadwal)
+        ? materiItem.jadwal
+        : [materiItem.jadwal];
+
+      return kelasList.map((kelas, index) => ({
+        mataPelajaran: materiItem.value,
+        kelas: kelas,
+        jadwal: jadwalList[index] || "-",
+      }));
+    })
+    .sort((a, b) => {
       const regex = /(\d+)\s*([A-Za-z\s]*)/;
       const matchA = a.kelas.match(regex);
       const matchB = b.kelas.match(regex);
@@ -42,6 +55,7 @@ export default function DataSiswaAkademik() {
   const handleShowData = (kelas: string) => {
     router.push(`${baseUrl}/${kelas}`);
   };
+
   return (
     <>
       <div className="w-full bg-white rounded-lg">
@@ -56,47 +70,46 @@ export default function DataSiswaAkademik() {
             <table className="w-full min-w-[max-content] border-collapse text-left text-xs md:text-sm text-gray-600">
               <thead className="bg-gray-100 text-gray-700 uppercase text-[10px] md:text-xs font-medium">
                 <tr>
-                  <th className="px-1 md:px-6 py-2 md:py-3 border-b text-center whitespace-nowrap overflow-hidden text-ellipsis">
+                  <th className="px-1 md:px-6 py-2 md:py-3 border-b text-center">
                     No
                   </th>
-                  <th className="px-1 md:px-6 py-2 md:py-3 border-b text-center whitespace-nowrap overflow-hidden text-ellipsis max-w-[50px] md:max-w-none">
+                  <th className="px-1 md:px-6 py-2 md:py-3 border-b text-center">
                     Mata Pelajaran
                   </th>
-                  <th className="px-1 md:px-6 py-2 md:py-3 border-b text-center whitespace-nowrap overflow-hidden text-ellipsis max-w-[50px] md:max-w-none">
+                  <th className="px-1 md:px-6 py-2 md:py-3 border-b text-center">
                     Kelas
                   </th>
-                  <th className="px-1 md:px-6 py-2 md:py-3 border-b text-center whitespace-nowrap overflow-hidden text-ellipsis max-w-[50px] md:max-w-none">
-                    Pertemuan
-                  </th>
-                  <th className="px-1 md:px-6 py-2 md:py-3 border-b text-center whitespace-nowrap overflow-hidden text-ellipsis max-w-[50px] md:max-w-none">
+                  <th className="px-1 md:px-6 py-2 md:py-3 border-b text-center">
                     Jadwal
                   </th>
-                  <th className="px-1 md:px-6 py-2 md:py-3 border-b text-center whitespace-nowrap overflow-hidden text-ellipsis max-w-[50px] md:max-w-none">
-                    Hadir
-                  </th>
-                  <th className="px-1 md:px-6 py-2 md:py-3 border-b text-center whitespace-nowrap overflow-hidden text-ellipsis max-w-[50px] md:max-w-none">
+                  <th className="px-1 md:px-6 py-2 md:py-3 border-b text-center">
                     Gabung
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {processedData?.map((item, index) => (
-                  <tr key={index} className="border-b border-gray-300">
+                {processedData.map((item, index) => (
+                  <tr
+                    key={index}
+                    className={`border-b border-gray-50 ${
+                      index % 2 === 0 ? "bg-white" : "bg-gray-100"
+                    }`}
+                  >
                     <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm">
                       {index + 1}
                     </td>
-                    <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[50px] md:max-w-none">
+                    <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm">
                       {item.mataPelajaran}
                     </td>
-                    <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[50px] md:max-w-none">
+                    <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm">
                       {item.kelas}
                     </td>
-                    <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm"></td>
-                    <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[50px] md:max-w-none"></td>
-                    <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm"></td>
+                    <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm">
+                      {item.jadwal}
+                    </td>
                     <td
                       onClick={() => handleShowData(item.kelas)}
-                      className="px-1 md:px-6 text-blue-500 hover:text-green-500 py-2 cursor-pointer md:py-3 text-center font-semibold text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[50px] md:max-w-none"
+                      className="px-1 md:px-6 text-blue-500 hover:text-green-500 py-2 cursor-pointer md:py-3 text-center font-semibold text-xs md:text-sm"
                     >
                       Lihat
                     </td>

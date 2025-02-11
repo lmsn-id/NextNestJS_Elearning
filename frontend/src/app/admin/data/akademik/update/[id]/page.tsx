@@ -7,7 +7,7 @@ interface Akademik {
   nuptk: string | null;
   nama: string;
   kelas?: string;
-  materi?: { value: string; kelasMateri: string[] }[];
+  materi?: { value: string; kelasMateri: string[]; jadwal: string[] }[];
   posisi: string;
 }
 
