@@ -17,6 +17,9 @@ export default function SidebarAkademik() {
   const [isMobile, setIsMobile] = useState(false);
   const { isOpen, closeSidebar } = useSidebarStore();
 
+  // State untuk Master Data Dropdown
+  const [isMasterDataOpen, setIsMasterDataOpen] = useState(false);
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
@@ -72,12 +75,6 @@ export default function SidebarAkademik() {
                 [
                   { name: "Dashboard", icon: "MdOutlineDashboard", link: "/" },
                   {
-                    name: "Data Siswa",
-                    icon: "PiStudentFill",
-                    link: "/data-siswa",
-                  },
-                  { name: "Materi", icon: "TbBook", link: "/materi" },
-                  {
                     name: "Jadwal Mengajar",
                     icon: "FiCalendar",
                     link: "/jadwal",
@@ -97,7 +94,7 @@ export default function SidebarAkademik() {
                 <div key={index} className="relative group">
                   <Link
                     href={`${baseurl()}${menu.link}`}
-                    className={`flex items-center text-sm gap-3.5 font-medium p-2 rounded-md ${
+                    className={`flex items-center text-sm gap-3.5 font-medium p-2 rounded-md transition ${
                       isActive(`${baseurl()}${menu.link}`)
                         ? "bg-gray-300 text-gray-900"
                         : "hover:bg-gray-300"
@@ -117,6 +114,68 @@ export default function SidebarAkademik() {
                   )}
                 </div>
               ))}
+
+              <div className="relative group">
+                <button
+                  onClick={() => setIsMasterDataOpen(!isMasterDataOpen)}
+                  className={`flex items-center text-sm gap-3.5 font-medium p-2 rounded-md w-full transition-all duration-300 
+                    ${
+                      isMasterDataOpen
+                        ? "bg-gray-300 text-gray-900"
+                        : "hover:bg-gray-300"
+                    } cursor-pointer`}
+                >
+                  <Icon name="FiDatabase" size={20} />
+                  {isOpen && <span>Master Data</span>}
+                  {isOpen && (
+                    <Icon
+                      name="MdOutlineLastPage"
+                      className={`ml-auto text-2xl transform transition-transform duration-300 ease-in-out ${
+                        isMasterDataOpen ? "rotate-90" : ""
+                      }`}
+                    />
+                  )}
+                </button>
+
+                {!isOpen && (
+                  <h2
+                    className="absolute left-48 top-0 bg-white font-semibold whitespace-pre text-gray-900 rounded-md drop-shadow-lg px-0 py-0 w-0 overflow-hidden 
+                    group-hover:px-2 group-hover:py-1 group-hover:left-14 group-hover:duration-300 group-hover:w-fit"
+                  >
+                    Master Data
+                  </h2>
+                )}
+
+                <div
+                  className={`ml-6 mt-1 flex flex-col gap-2 transition-all duration-300 overflow-hidden ${
+                    isMasterDataOpen
+                      ? "max-h-40 opacity-100"
+                      : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <Link
+                    href={`${baseurl()}/data/siswa`}
+                    className={`flex items-center text-sm gap-3.5 font-medium p-2 rounded-md hover:bg-gray-300 cursor-pointer ${
+                      isActive(`${baseurl()}/data/siswa`)
+                        ? "bg-gray-300 text-gray-900"
+                        : ""
+                    }`}
+                  >
+                    <Icon name="PiStudentFill" size={18} />
+                    {isOpen && <span>Data Siswa</span>}
+                  </Link>
+
+                  <Link
+                    href="/materi"
+                    className={`flex items-center text-sm gap-3.5 font-medium p-2 rounded-md hover:bg-gray-300 cursor-pointer ${
+                      isActive("/materi") ? "bg-gray-300 text-gray-900" : ""
+                    }`}
+                  >
+                    <Icon name="TbBook" size={18} />
+                    {isOpen && <span>Materi</span>}
+                  </Link>
+                </div>
+              </div>
             </div>
           </section>
         </div>

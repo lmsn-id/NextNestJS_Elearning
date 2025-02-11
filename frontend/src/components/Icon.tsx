@@ -13,7 +13,7 @@ import { IoMdChatbubbles, IoIosArrowForward } from "react-icons/io";
 import { BsClipboard2DataFill } from "react-icons/bs";
 import { PiStudentFill } from "react-icons/pi";
 import { FaBookBookmark } from "react-icons/fa6";
-import { FiFileText, FiCalendar, FiFolder } from "react-icons/fi";
+import { FiFileText, FiCalendar, FiFolder, FiDatabase } from "react-icons/fi";
 import { TbBrandDatabricks, TbBook, TbReportAnalytics } from "react-icons/tb";
 import {
   MdOutlineLastPage,
@@ -72,6 +72,9 @@ const Icons = {
     ssr: false,
   }),
   MdOutlineDashboard: dynamic(() => Promise.resolve(MdOutlineDashboard), {
+    ssr: false,
+  }),
+  FiDatabase: dynamic(() => Promise.resolve(FiDatabase), {
     ssr: false,
   }),
 };

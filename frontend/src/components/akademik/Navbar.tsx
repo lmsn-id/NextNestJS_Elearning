@@ -4,13 +4,22 @@ import Icon from "../Icon";
 import Link from "next/link";
 import LogoutButton from "../LogoutBotton";
 import { useSidebarStore } from "@/hook/useComponents";
-import { Session } from "next-auth";
 
-interface SessionProp {
-  session: Session | null;
+export interface DataAkademik {
+  id: string;
+  nip: string;
+  nuptk: string | null;
+  nama: string;
+  kelas?: string;
+  materi?: { value: string; kelasMateri: string[] }[];
+  posisi: string;
 }
 
-export default function NavbarAkademik({ session }: SessionProp) {
+interface NavbarProps {
+  dataAkademik: DataAkademik | null;
+}
+
+export default function NavbarAkademik({ dataAkademik }: NavbarProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const toggleSidebar = useSidebarStore((state) => state.toggleSidebar);
@@ -33,7 +42,7 @@ export default function NavbarAkademik({ session }: SessionProp) {
   });
   return (
     <>
-      <nav className="bg-gray-100 shadow-lg  px-4 py-3 ">
+      <nav className="bg-gray-200   px-4 py-3 border-b-2 ">
         <ul className="flex items-center justify-between md:flex-row-reverse">
           <li className="text-sm md:mx-20 flex justify-center items-center gap-5 relative">
             <div
@@ -48,9 +57,9 @@ export default function NavbarAkademik({ session }: SessionProp) {
                 />
               </div>
               <div>
-                <h4 className="font-semibold">Ariel</h4>
+                <h4 className="font-semibold">{dataAkademik?.nama}</h4>
                 <div className="flex gap-1">
-                  <p className="text-xs">{session?.user?.role}</p>
+                  <p className="text-xs">{dataAkademik?.posisi}</p>
                 </div>
               </div>
 
