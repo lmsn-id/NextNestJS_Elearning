@@ -11,8 +11,8 @@ interface MateriItem {
 export default function DataSiswaAkademik() {
   const { dataAkademik } = useAkademik();
   const router = useRouter();
-  const pathname: string = usePathname();
-  const baseUrl = pathname.split("/").slice(0, 4).join("/");
+  const pathname = usePathname();
+  const baseUrl = pathname.split("/").pop();
   console.log(dataAkademik);
 
   if (!dataAkademik || !dataAkademik.materi) {
@@ -53,7 +53,7 @@ export default function DataSiswaAkademik() {
     });
 
   const handleShowData = (kelas: string) => {
-    router.push(`${baseUrl}/${kelas}`);
+    router.push(`${baseUrl}/${encodeURIComponent(kelas)}`);
   };
 
   return (
@@ -107,11 +107,13 @@ export default function DataSiswaAkademik() {
                     <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm">
                       {item.jadwal}
                     </td>
-                    <td
-                      onClick={() => handleShowData(item.kelas)}
-                      className="px-1 md:px-6 text-blue-500 hover:text-green-500 py-2 cursor-pointer md:py-3 text-center font-semibold text-xs md:text-sm"
-                    >
-                      Lihat
+                    <td className="px-1 md:px-6 text-center">
+                      <button
+                        className="text-blue-500 hover:text-blue-700 py-2 cursor-pointer md:py-3 text-center font-semibold text-xs md:text-sm"
+                        onClick={() => handleShowData(item.kelas)}
+                      >
+                        Lihat
+                      </button>
                     </td>
                   </tr>
                 ))}

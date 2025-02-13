@@ -165,9 +165,11 @@ export default function SidebarAkademik() {
                   </Link>
 
                   <Link
-                    href="/materi"
+                    href={`${baseurl()}/data/materi`}
                     className={`flex items-center text-sm gap-3.5 font-medium p-2 rounded-md hover:bg-gray-300 cursor-pointer ${
-                      isActive("/materi") ? "bg-gray-300 text-gray-900" : ""
+                      isActive(`${baseurl()}/data/materi`)
+                        ? "bg-gray-300 text-gray-900"
+                        : ""
                     }`}
                   >
                     <Icon name="TbBook" size={18} />

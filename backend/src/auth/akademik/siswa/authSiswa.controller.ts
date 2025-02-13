@@ -38,4 +38,9 @@ export class AuthSiswaController {
   async deleteSiswa(@Param("id") id: string) {
     return this.authSiswaService.deleteSiswa(id);
   }
+
+  @Get("data/siswa/:kelasJurusan")
+  async getSiswaByKelasJurusan(@Param("kelasJurusan") kelasJurusan: string) {
+    return this.authSiswaService.getSiswaByKelasJurusan(kelasJurusan);
+  }
 }

@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import UpdateAkademikClient from "@/components/admin/akademik/Update";
+import Loading from "@/components/Loading";
 
 interface Akademik {
   id: string;
@@ -38,7 +39,7 @@ export default async function UpdateAkademik({
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loading bgColor="bg-gray-100" isAbsolute />}>
       <UpdateAkademikClient akademikData={akademikData} />
     </Suspense>
   );

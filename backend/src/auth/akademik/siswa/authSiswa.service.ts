@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { db } from "libs/db/drizzle.config";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import { users, datasiswa } from "libs/db/schema";
 import * as bcrypt from "bcrypt";
@@ -122,6 +122,36 @@ export class AuthSiswaService {
       console.error("Kesalahan saat update siswa:", error);
       throw new Error("Gagal memperbarui data siswa.");
     }
+  }
+
+  async getSiswaByKelasJurusan(kelasJurusan: string) {
+    const decodedParam = decodeURIComponent(kelasJurusan);
+    const regex = /^(\d+)\s+(.+)$/;
+    const match = decodedParam.match(regex);
+
+    if (!match) {
+      throw new NotFoundException("Format kelas dan jurusan tidak valid");
+    }
+
+    const kelas = match[1];
+    const jurusan = match[2];
+
+    const siswa = await this.db
+      .select({
+        id: datasiswa.id,
+        nis: datasiswa.nis,
+        nama: datasiswa.nama,
+        kelas: datasiswa.kelas,
+        jurusan: datasiswa.jurusan,
+      })
+      .from(datasiswa)
+      .where(and(eq(datasiswa.kelas, kelas), eq(datasiswa.jurusan, jurusan)));
+
+    if (!siswa.length) {
+      throw new NotFoundException("Data siswa tidak ditemukan");
+    }
+
+    return siswa;
   }
 
   async deleteSiswa(id: string) {

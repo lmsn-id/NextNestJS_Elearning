@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import UpdateSiswaClient from "@/components/admin/siswa/Update";
+import Loading from "@/components/Loading";
 
 interface Siswa {
   id: string;
@@ -44,7 +45,7 @@ export default async function UpdateSiswa({
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loading bgColor="bg-gray-100" isAbsolute />}>
       <UpdateSiswaClient siswaData={siswaData} />
     </Suspense>
   );

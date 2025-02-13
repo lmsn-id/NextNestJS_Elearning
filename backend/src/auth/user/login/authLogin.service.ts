@@ -44,7 +44,7 @@ export class AuthLoginService {
     const roleRedirects: Record<string, string> = {
       superadmin: "/admin",
       siswa: "/e-learning",
-      akademik: "/akademik",
+      Guru: "/akademik",
     };
 
     return {
