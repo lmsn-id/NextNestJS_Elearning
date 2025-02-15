@@ -25,6 +25,7 @@ interface NavbarProps {
 
 export default function NavbarAkademik({ dataAkademik }: NavbarProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [OpenNotification, setOpenNotification] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const toggleSidebar = useSidebarStore((state) => state.toggleSidebar);
 
@@ -38,17 +39,53 @@ export default function NavbarAkademik({ dataAkademik }: NavbarProps) {
       }
     };
 
+    const handleClickNotification = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpenNotification(false);
+      }
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickNotification);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickNotification);
     };
   });
   return (
     <>
       <nav className="bg-gray-200   px-4 py-3 border-b-2 ">
         <ul className="flex items-center justify-between md:flex-row-reverse">
-          <li className="text-sm md:mx-20 flex justify-center items-center gap-5 relative">
+          <li className="text-sm md:mx-20 flex md:flex-row-reverse justify-center items-center gap-2 md:gap-5 relative">
+            <div className="relative flex items-center">
+              <Icon
+                name="MdOutlineNotificationsActive"
+                className="font-semibold cursor-pointer text-xl"
+                onClick={() => setOpenNotification(!OpenNotification)}
+              />
+              <span
+                className="absolute -top-1.5 -right-3 bg-red-500 text-white text-xs font-bold 
+                   flex items-center justify-center min-w-[18px] min-h-[18px] rounded-full"
+              >
+                1
+              </span>
+              {OpenNotification && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute top-14 left-1/2 transform -translate-x-12  md:-translate-x-1/2 mt-2 w-48 bg-white rounded shadow-md z-50"
+                >
+                  <div className="absolute top-[-10px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-white"></div>
+                  <ul className="text-sm text-gray-800">
+                    <li className="border-b">Notifikasi</li>
+                  </ul>
+                </div>
+              )}
+            </div>
+
             <div
               className="flex items-center gap-2 cursor-pointer"
               onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -61,7 +98,7 @@ export default function NavbarAkademik({ dataAkademik }: NavbarProps) {
                 />
               </div>
               <div>
-                <h4 className="font-semibold">{dataAkademik?.nama}</h4>
+                <h4 className="font-semibold ">{dataAkademik?.nama}</h4>
                 <div className="flex gap-1">
                   <p className="text-xs">{dataAkademik?.posisi}</p>
                 </div>

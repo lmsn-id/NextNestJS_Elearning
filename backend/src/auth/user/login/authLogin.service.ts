@@ -34,6 +34,8 @@ export class AuthLoginService {
 
     const expired_At = this.getMidnightTimestamp();
 
+    await db.delete(accsestoken).where(eq(accsestoken.user_id, user.id));
+
     await db.insert(accsestoken).values({
       id: randomBytes(16).toString("hex"),
       user_id: user.id,

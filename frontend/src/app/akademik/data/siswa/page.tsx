@@ -13,7 +13,6 @@ export default function DataSiswaAkademik() {
   const router = useRouter();
   const pathname = usePathname();
   const baseUrl = pathname.split("/").pop();
-  console.log(dataAkademik);
 
   if (!dataAkademik || !dataAkademik.materi) {
     return <div>Loading...</div>;
@@ -98,13 +97,13 @@ export default function DataSiswaAkademik() {
                     <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm">
                       {index + 1}
                     </td>
-                    <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm">
+                    <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm truncate max-w-[60px] overflow-hidden whitespace-nowrap">
                       {item.mataPelajaran}
                     </td>
                     <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm">
                       {item.kelas}
                     </td>
-                    <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm">
+                    <td className="px-1 md:px-6 py-2 md:py-3 text-center font-semibold text-xs md:text-sm truncate max-w-[60px] overflow-hidden whitespace-nowrap">
                       {item.jadwal}
                     </td>
                     <td className="px-1 md:px-6 text-center">

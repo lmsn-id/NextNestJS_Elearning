@@ -20,6 +20,7 @@ import {
   MdCached,
   MdNotificationsActive,
   MdOutlineDashboard,
+  MdOutlineNotificationsActive,
 } from "react-icons/md";
 import { HiMenuAlt3 } from "react-icons/hi";
 import clsx from "clsx";
@@ -77,6 +78,12 @@ const Icons = {
   FiDatabase: dynamic(() => Promise.resolve(FiDatabase), {
     ssr: false,
   }),
+  MdOutlineNotificationsActive: dynamic(
+    () => Promise.resolve(MdOutlineNotificationsActive),
+    {
+      ssr: false,
+    }
+  ),
 };
 
 const Icon = memo(
