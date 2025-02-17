@@ -38,8 +38,6 @@ export default function Register() {
 
       const res = await axios.post(url, data);
 
-      console.log(res);
-
       if (res.status >= 200 && res.status < 300) {
         toast.success(res.data.message, {
           onClose: () => {

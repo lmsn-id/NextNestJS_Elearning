@@ -60,7 +60,7 @@ export default function NavbarAkademik({ dataAkademik }: NavbarProps) {
     <>
       <nav className="bg-gray-200   px-4 py-3 border-b-2 ">
         <ul className="flex items-center justify-between md:flex-row-reverse">
-          <li className="text-sm md:mx-20 flex md:flex-row-reverse justify-center items-center gap-2 md:gap-5 relative">
+          <li className="text-sm md:mx-20 flex md:flex-row-reverse justify-center items-center gap-5 relative">
             <div className="relative flex items-center">
               <Icon
                 name="MdOutlineNotificationsActive"

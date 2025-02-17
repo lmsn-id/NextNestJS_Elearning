@@ -2,7 +2,7 @@
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 interface FormData {
   Nis: string;
@@ -37,22 +37,45 @@ export default function AddDataSiswaSA() {
         return;
       }
 
-      console.log(data);
-
       const url = `${process.env.NEXT_PUBLIC_API_URL}/auth/add/siswa/`;
       const response = await axios.post(url, data);
 
-      if (response.status >= 200 && response.status < 300) {
-        toast.success(response.data.message, {
-          onClose: () => {
-            router.push(response.data.redirect);
-          },
+      if (!response.data) {
+        throw new Error("Response dari server tidak valid.");
+      }
+
+      if (response.data.status === "error") {
+        toast.error(response.data.message, {
+          autoClose: 2000,
+          hideProgressBar: true,
         });
+
+        return;
+      }
+
+      if (response.data.redirect && response.data.redirect.startsWith("/")) {
+        toast.success(response.data.message, {
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
+        router.push(response.data.redirect);
       } else {
-        toast.error(response.data.message);
+        toast.error("Gagal mengarahkan ke halaman yang benar.");
       }
     } catch (error) {
       console.error("Error:", error);
+
+      if (error instanceof AxiosError) {
+        if (error.response?.data?.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error("Terjadi kesalahan dari server.");
+        }
+      } else if (error instanceof Error) {
+        toast.error(error.message || "Terjadi kesalahan. Silakan coba lagi.");
+      } else {
+        toast.error("Terjadi kesalahan yang tidak diketahui.");
+      }
     }
   };
 

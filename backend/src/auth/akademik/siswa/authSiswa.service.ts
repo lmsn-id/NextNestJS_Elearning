@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  HttpException,
+  HttpStatus,
+} from "@nestjs/common";
 import { db } from "libs/db/drizzle.config";
 import { eq, and } from "drizzle-orm";
 import { randomUUID } from "crypto";
@@ -12,6 +17,32 @@ export class AuthSiswaService {
   async createSiswa(data: any) {
     if (!data.Nis || !data.Nama || !data.Jurusan || !data.Kelas) {
       throw new Error("NIS, Nama, Jurusan, dan Kelas wajib diisi!");
+    }
+
+    const existingNis = await this.db
+      .select()
+      .from(datasiswa)
+      .where(eq(datasiswa.nis, data.Nis));
+
+    if (existingNis.length > 0) {
+      return {
+        status: "error",
+        message: "NIS sudah terdaftar!",
+      };
+    }
+
+    if (data.Nisn) {
+      const existingNisn = await this.db
+        .select()
+        .from(datasiswa)
+        .where(eq(datasiswa.nisn, data.Nisn));
+
+      if (existingNisn.length > 0) {
+        return {
+          status: "error",
+          message: "NISN sudah terdaftar!",
+        };
+      }
     }
 
     const siswaId = randomUUID();

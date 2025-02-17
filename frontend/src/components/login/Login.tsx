@@ -51,8 +51,6 @@ export default function LoginPage({ session }: LoginPageProps) {
         password: data.password,
       });
 
-      console.log("Result:", result);
-
       if (result?.ok) {
         router.refresh();
       } else {

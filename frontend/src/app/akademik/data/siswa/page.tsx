@@ -51,8 +51,12 @@ export default function DataSiswaAkademik() {
       return a.kelas.localeCompare(b.kelas);
     });
 
-  const handleShowData = (kelas: string) => {
-    router.push(`${baseUrl}/${encodeURIComponent(kelas)}`);
+  const handleShowData = (kelas: string, mataPelajaran: string) => {
+    router.push(
+      `${baseUrl}/${encodeURIComponent(kelas)}?mapel=${encodeURIComponent(
+        mataPelajaran
+      )}`
+    );
   };
 
   return (
@@ -109,7 +113,9 @@ export default function DataSiswaAkademik() {
                     <td className="px-1 md:px-6 text-center">
                       <button
                         className="text-blue-500 hover:text-blue-700 py-2 cursor-pointer md:py-3 text-center font-semibold text-xs md:text-sm"
-                        onClick={() => handleShowData(item.kelas)}
+                        onClick={() =>
+                          handleShowData(item.kelas, item.mataPelajaran)
+                        }
                       >
                         Lihat
                       </button>

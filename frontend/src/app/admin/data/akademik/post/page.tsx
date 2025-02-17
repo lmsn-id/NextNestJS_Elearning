@@ -81,10 +81,10 @@ export default function AddAkunAkademik() {
 
       if (response.status >= 200 && response.status < 300) {
         toast.success(response.data.message, {
-          onClose: () => {
-            router.push(response.data.redirect);
-          },
+          autoClose: 2000,
+          hideProgressBar: true,
         });
+        router.push(response.data.redirect);
       } else {
         toast.error(response.data.message);
       }
