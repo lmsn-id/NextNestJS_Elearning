@@ -79,6 +79,7 @@ export const dataakademik = pgTable("dataakademik", {
 export const dataabsensi = pgTable("dataabsensi", {
   id: varchar("id", { length: 36 }).primaryKey(),
   tanggal: timestamp("tanggal", { mode: "string" }).notNull(),
+  kelas: text("kelas").notNull(),
   matapelajaran: text("matapelajaran"),
   data_siswa: json("data_siswa").notNull(),
   created_at: timestamp("created_at", { mode: "string", withTimezone: true })

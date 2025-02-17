@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ interface DataKelasSiswa {
   nama: string;
   nis: string;
   kelas: string;
+  status: string;
 }
 
 interface AbsensiForm {
@@ -18,17 +19,27 @@ interface AbsensiForm {
   mataPelajaran: string;
 }
 
+interface DataAbsensi {
+  id: string;
+  tanggal: string;
+  kelas: string;
+  matapelajaran: string;
+  data_siswa: DataKelasSiswa[];
+}
+
 export default function DataKelasSiswaAkademik({
   dataKelas,
   mataPelajaran,
+  dataAbsensi,
 }: {
   dataKelas: DataKelasSiswa[];
   mataPelajaran: string;
+  dataAbsensi: DataAbsensi[];
 }) {
-  const { register, handleSubmit } = useForm<AbsensiForm>({
+  const { register, handleSubmit, setValue } = useForm<AbsensiForm>({
     defaultValues: {
       status: dataKelas.reduce<Record<string, string>>((acc, siswa) => {
-        acc[siswa.id] = "H";
+        acc[siswa.nis] = siswa.status || "H";
         return acc;
       }, {}),
       mataPelajaran: mataPelajaran,
@@ -39,27 +50,57 @@ export default function DataKelasSiswaAkademik({
     [...dataKelas].sort((a, b) => a.nama.localeCompare(b.nama))
   );
   const [showAbsen, setShowAbsen] = useState(false);
+  const [selectedAbsensi, setSelectedAbsensi] = useState<DataAbsensi | null>(
+    null
+  );
   const router = useRouter();
 
+  useEffect(() => {
+    if (selectedAbsensi) {
+      const status = selectedAbsensi.data_siswa.reduce<Record<string, string>>(
+        (acc, siswa) => {
+          acc[siswa.nis] = siswa.status;
+          return acc;
+        },
+        {}
+      );
+      setValue("status", status);
+    }
+  }, [selectedAbsensi, setValue]);
+
   const onSubmit = async (data: AbsensiForm) => {
-    const absensiData = [
-      {
-        matapelajaran: data.mataPelajaran,
-        tanggal: new Date().toISOString().split("T")[0],
-        data_siswa: sortedData.map((siswa) => ({
-          nis: siswa.nis,
-          nama: siswa.nama,
-          kelas: siswa.kelas,
-          status: data.status[siswa.id] || "H",
-        })),
-      },
-    ];
+    let absensiData: DataAbsensi = {
+      tanggal: new Date().toISOString().split("T")[0],
+      kelas: sortedData.length > 0 ? sortedData[0].kelas : "",
+      matapelajaran: data.mataPelajaran,
+      data_siswa: sortedData.map((siswa) => ({
+        nis: siswa.nis,
+        nama: siswa.nama,
+        status: data.status[siswa.nis] || "H",
+      })),
+    };
+
+    if (selectedAbsensi) {
+      absensiData = { ...absensiData, id: selectedAbsensi.id };
+    }
 
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/absensi`,
-        absensiData
-      );
+      const isEdit = !!selectedAbsensi;
+      const url = isEdit
+        ? `${process.env.NEXT_PUBLIC_API_URL}/auth/absensi/${selectedAbsensi.id}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/auth/absensi`;
+
+      const method = isEdit ? "put" : "post";
+
+      const response = await axios[method](url, absensiData);
+
+      if (response.data.status === "error") {
+        toast.error(response.data.message, {
+          autoClose: 2000,
+        });
+
+        return;
+      }
 
       if (response.status >= 200 && response.status < 300) {
         toast.success(response.data.message, {
@@ -81,6 +122,13 @@ export default function DataKelasSiswaAkademik({
     }
   };
 
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = event.target.value;
+    const selected = dataAbsensi.find((absensi) => absensi.id === selectedId);
+    setSelectedAbsensi(selected || null);
+    setShowAbsen(!!selected);
+  };
+
   return (
     <div className="w-full bg-white rounded-lg shadow-md p-6">
       <div className="w-full bg-blue-400 p-4 rounded-t-lg">
@@ -91,8 +139,16 @@ export default function DataKelasSiswaAkademik({
               className="p-2 border rounded-md"
               defaultValue={new Date().toISOString().split("T")[0]}
             />
-            <select className="p-2 border rounded-md">
+            <select
+              className="p-2 border rounded-md"
+              onChange={handleSelectChange}
+            >
               <option value="">Tanggal Absen</option>
+              {dataAbsensi.map((absensi) => (
+                <option key={absensi.id} value={absensi.id}>
+                  {absensi.tanggal}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex">
@@ -164,12 +220,12 @@ export default function DataKelasSiswaAkademik({
                             key={status}
                             className="flex flex-col gap-1 items-center justify-center"
                           >
-                            <label htmlFor={`${siswa.id}-${status}`}>
+                            <label htmlFor={`${siswa.nis}-${status}`}>
                               {status}
                             </label>
                             <input
                               type="radio"
-                              {...register(`status.${siswa.id}`)}
+                              {...register(`status.${siswa.nis}`)}
                               value={status}
                               defaultChecked={status === "H"}
                             />
