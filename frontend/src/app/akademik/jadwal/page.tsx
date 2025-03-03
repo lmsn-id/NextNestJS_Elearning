@@ -6,7 +6,7 @@ import { useReactToPrint } from "react-to-print";
 
 export default function Jadwal() {
   const { dataAkademik } = useAkademik();
-  const printRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [isReady, setIsReady] = useState(false);
 
   const hariList = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
@@ -43,39 +43,27 @@ export default function Jadwal() {
   });
 
   useEffect(() => {
-    if (printRef.current) {
-      console.log("✅ printRef berhasil terhubung:", printRef.current);
+    if (contentRef.current) {
+      console.log("✅ printRef berhasil terhubung");
       setIsReady(true);
     }
-  }, [printRef]);
+  }, [contentRef]);
 
-  const handlePrint = useReactToPrint({
-    documentTitle: "Jadwal_Pelajaran",
+  const reactToPrintFn = useReactToPrint({
+    contentRef,
+    documentTitle: "Jadwal Kelas",
     pageStyle: `
-      @page {
-        size: A4 landscape;
-        margin: 1cm;
-      }
-      body {
-        font-size: 12px;
-        padding: 10px;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      th, td {
-        border: 1px solid black;
-        padding: 5px;
-        text-align: center;
-      }
+    @page {
+      size: landscape;
+      margin: 1rem;
+    }
     `,
   });
 
   return (
     <>
-      <div className="w-full bg-white rounded-lg p-4 md:p-8">
-        <div ref={printRef} className="p-4 bg-white">
+      <div className="w-full bg-white rounded-lg p-4">
+        <div ref={contentRef} className="p-4 md:p-8 bg-white">
           <div className="header mb-4">
             <div className="flex justify-between items-center">
               <div className="logo">
@@ -111,10 +99,10 @@ export default function Jadwal() {
               <thead className="bg-gray-100 text-gray-700 uppercase text-[10px] md:text-xs font-medium">
                 <tr>
                   <th className="border border-gray-300 px-4 py-2 text-center">
-                    Kelas
+                    Mata Pelajaran
                   </th>
                   <th className="border border-gray-300 px-4 py-2 text-center">
-                    Mata Pelajaran
+                    Kelas
                   </th>
                   {hariList.map((hari) => (
                     <th
@@ -131,10 +119,10 @@ export default function Jadwal() {
                   formattedData.map((item, index) => (
                     <tr key={index} className="text-center">
                       <td className="border border-gray-300 px-4 py-2">
-                        {item.kelas}
+                        {item.mataPelajaran}
                       </td>
                       <td className="border border-gray-300 px-4 py-2">
-                        {item.mataPelajaran}
+                        {item.kelas}
                       </td>
                       {hariList.map((hari) => (
                         <td
@@ -165,7 +153,7 @@ export default function Jadwal() {
           <button
             onClick={
               isReady
-                ? () => handlePrint()
+                ? () => reactToPrintFn()
                 : () => console.log("⏳ Menunggu printRef tersedia...")
             }
             className={`font-bold py-2 px-4 rounded ${
