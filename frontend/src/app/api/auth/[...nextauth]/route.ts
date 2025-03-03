@@ -1,5 +1,4 @@
 import NextAuth, { AuthOptions, SessionStrategy } from "next-auth";
-import { toast } from "react-toastify";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 import { Session } from "next-auth";
@@ -77,7 +76,7 @@ export const authOptions: AuthOptions = {
       const tokenExpirationTime = new Date(token.expired as string).getTime();
 
       if (tokenExpirationTime <= currentTime) {
-        toast.info("Token expired, logging out...");
+        token.expiredFlag = true;
         return {};
       }
 

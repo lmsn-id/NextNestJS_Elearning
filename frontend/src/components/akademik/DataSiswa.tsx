@@ -70,12 +70,15 @@ export default function DataKelasSiswaAkademik({
 
   const onSubmit = async (data: AbsensiForm) => {
     let absensiData: DataAbsensi = {
+      id: selectedAbsensi ? selectedAbsensi.id : "",
       tanggal: new Date().toISOString().split("T")[0],
       kelas: sortedData.length > 0 ? sortedData[0].kelas : "",
       matapelajaran: data.mataPelajaran,
       data_siswa: sortedData.map((siswa) => ({
+        id: siswa.id,
         nis: siswa.nis,
         nama: siswa.nama,
+        kelas: siswa.kelas,
         status: data.status[siswa.nis] || "H",
       })),
     };
@@ -136,8 +139,9 @@ export default function DataKelasSiswaAkademik({
           <div className="flex flex-col md:flex-row items-start gap-2 w-full md:w-auto">
             <input
               type="date"
-              className="p-2 border rounded-md"
+              className="p-2 border rounded-md bg-white"
               defaultValue={new Date().toISOString().split("T")[0]}
+              disabled
             />
             <select
               className="p-2 border rounded-md"
@@ -146,7 +150,7 @@ export default function DataKelasSiswaAkademik({
               <option value="">Tanggal Absen</option>
               {dataAbsensi.map((absensi) => (
                 <option key={absensi.id} value={absensi.id}>
-                  {absensi.tanggal}
+                  {new Date(absensi.tanggal).toLocaleDateString("id-ID")}
                 </option>
               ))}
             </select>
